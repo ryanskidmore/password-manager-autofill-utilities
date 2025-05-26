@@ -11,9 +11,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "build:watch": "rollup -c -w",
-    "dev": "rollup -c -w",
+    "build": "rollup -c rollup.config.mjs",
+    "build:watch": "rollup -c rollup.config.mjs -w",
+    "dev": "rollup -c rollup.config.mjs -w",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

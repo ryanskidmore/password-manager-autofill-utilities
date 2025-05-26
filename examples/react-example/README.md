@@ -15,21 +15,25 @@ This example serves multiple purposes:
 ## Features Tested
 
 ### Core Functions
+
 - `getPasswordManagerAttributes()` - with various configurations
 - `getPasswordManagerPreventionProps()` - convenience function
 - `mergeWithPasswordManagerPrevention()` - prop merging
 
 ### React Utilities
+
 - `usePasswordManagerControl()` - React hook with configuration
 - `usePasswordManagerPrevention()` - React hook for prevention
 - `mergePropsWithPasswordManagerPrevention()` - React-specific prop merging
 
 ### Type Safety
+
 - All TypeScript types and interfaces
 - Enum usage and validation
 - Proper prop spreading without type errors
 
 ### React Integration
+
 - Component prop spreading
 - Hook usage patterns
 - Form integration examples
@@ -68,9 +72,10 @@ When running this example, you should see:
 This example is automatically built and type-checked as part of the library's validation process. If any compatibility issues are introduced, the build will fail, preventing regressions.
 
 The example tests:
+
 - ✅ Library imports work correctly
 - ✅ TypeScript types are properly exported
 - ✅ React props spread without warnings
 - ✅ All functions return correct attribute objects
 - ✅ Hooks work in React components
-- ✅ Error handling works as expected 
+- ✅ Error handling works as expected

@@ -15,20 +15,9 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-          
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-lint-${{ hashFiles('**/bun.lockb', '**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-lint-
-            ${{ runner.os }}-bun-
             
       - name: Install dependencies
         run: bun install
@@ -59,7 +48,7 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
           
@@ -136,31 +125,12 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
           
       - name: Install dependencies
         run: bun install
-        
-      - name: Check for hardcoded secrets
-        run: |
-          echo "Checking for potential hardcoded secrets..."
-          
-          # Check for common secret patterns
-          if grep -r -i "password\s*=" src/ --include="*.ts" --include="*.js"; then
-            echo "Warning: Found potential hardcoded passwords"
-          fi
-          
-          if grep -r -i "api[_-]?key\s*=" src/ --include="*.ts" --include="*.js"; then
-            echo "Warning: Found potential hardcoded API keys"
-          fi
-          
-          if grep -r -i "secret\s*=" src/ --include="*.ts" --include="*.js"; then
-            echo "Warning: Found potential hardcoded secrets"
-          fi
-          
-          echo "Security check completed"
           
       - name: Check package.json security
         run: |

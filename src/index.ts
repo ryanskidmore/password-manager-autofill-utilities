@@ -49,6 +49,4 @@ export {
 } from './utils/reactUtils';
 
 // Backward compatibility exports (matching original API)
-export {
-  getPasswordManagerPreventionProps as PASSWORD_MANAGER_PREVENTION_ATTRS,
-} from './utils/passwordManagerUtils'; 
+export { getPasswordManagerPreventionProps as PASSWORD_MANAGER_PREVENTION_ATTRS } from './utils/passwordManagerUtils';

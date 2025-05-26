@@ -4,12 +4,12 @@ import {
   getPasswordManagerAttributes,
   getPasswordManagerPreventionProps,
   mergeWithPasswordManagerPrevention,
-  
+
   // React utilities
   usePasswordManagerControl,
   usePasswordManagerPrevention,
   mergePropsWithPasswordManagerPrevention,
-  
+
   // Types and enums
   PasswordManager,
   PasswordManagerBehavior,
@@ -28,7 +28,7 @@ interface TestInputProps {
 
 const TestInput: React.FC<TestInputProps> = ({ label, ...props }) => {
   const preventionProps = mergePropsWithPasswordManagerPrevention(props);
-  
+
   return (
     <div className="input-group">
       <label>{label}</label>
@@ -39,46 +39,54 @@ const TestInput: React.FC<TestInputProps> = ({ label, ...props }) => {
 
 // Component that tests the React hooks
 const HookTestComponent: React.FC = () => {
-  const [selectedManagers, setSelectedManagers] = useState<PasswordManager[]>([]);
-  const [behavior, setBehavior] = useState<PasswordManagerBehavior>(PasswordManagerBehavior.IGNORE);
-  
+  const [selectedManagers, setSelectedManagers] = useState<PasswordManager[]>(
+    []
+  );
+  const [behavior, setBehavior] = useState<PasswordManagerBehavior>(
+    PasswordManagerBehavior.IGNORE
+  );
+
   const config: PasswordManagerConfig = {
     behavior,
     managers: selectedManagers.length > 0 ? selectedManagers : undefined,
   };
-  
+
   const controlAttrs = usePasswordManagerControl(config);
   const preventionAttrs = usePasswordManagerPrevention();
-  
+
   return (
     <div className="hook-test">
       <h3>React Hooks Test</h3>
-      
+
       <div className="controls">
         <div>
           <label>Behavior:</label>
-          <select 
-            value={behavior} 
-            onChange={(e) => setBehavior(e.target.value as PasswordManagerBehavior)}
+          <select
+            value={behavior}
+            onChange={e =>
+              setBehavior(e.target.value as PasswordManagerBehavior)
+            }
           >
             <option value={PasswordManagerBehavior.IGNORE}>Ignore</option>
             <option value={PasswordManagerBehavior.ALLOW}>Allow</option>
           </select>
         </div>
-        
+
         <div>
           <label>Target Managers:</label>
           <div className="checkbox-group">
-            {Object.values(PasswordManager).map((manager) => (
+            {Object.values(PasswordManager).map(manager => (
               <label key={manager}>
                 <input
                   type="checkbox"
                   checked={selectedManagers.includes(manager)}
-                  onChange={(e) => {
+                  onChange={e => {
                     if (e.target.checked) {
                       setSelectedManagers([...selectedManagers, manager]);
                     } else {
-                      setSelectedManagers(selectedManagers.filter(m => m !== manager));
+                      setSelectedManagers(
+                        selectedManagers.filter(m => m !== manager)
+                      );
                     }
                   }}
                 />
@@ -88,17 +96,21 @@ const HookTestComponent: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="test-inputs">
         <div>
           <label>usePasswordManagerControl:</label>
           <input {...controlAttrs} type="text" placeholder="Controlled input" />
           <pre>{JSON.stringify(controlAttrs, null, 2)}</pre>
         </div>
-        
+
         <div>
           <label>usePasswordManagerPrevention:</label>
-          <input {...preventionAttrs} type="text" placeholder="Prevention input" />
+          <input
+            {...preventionAttrs}
+            type="text"
+            placeholder="Prevention input"
+          />
           <pre>{JSON.stringify(preventionAttrs, null, 2)}</pre>
         </div>
       </div>
@@ -111,52 +123,68 @@ const CoreFunctionTestComponent: React.FC = () => {
   const allManagersIgnore = getPasswordManagerAttributes({
     behavior: PasswordManagerBehavior.IGNORE,
   });
-  
+
   const specificManagersIgnore = getPasswordManagerAttributes({
     behavior: PasswordManagerBehavior.IGNORE,
     managers: [PasswordManager.ONE_PASSWORD, PasswordManager.LASTPASS],
   });
-  
+
   const browserAllow = getPasswordManagerAttributes({
     behavior: PasswordManagerBehavior.ALLOW,
     managers: [PasswordManager.BROWSER_AUTOCOMPLETE],
   });
-  
+
   const preventionProps = getPasswordManagerPreventionProps();
-  
+
   const mergedProps = mergeWithPasswordManagerPrevention({
     className: 'custom-input',
     placeholder: 'Merged props example',
   });
-  
+
   return (
     <div className="core-test">
       <h3>Core Functions Test</h3>
-      
+
       <div className="test-case">
         <label>All Managers Ignore:</label>
-        <input {...allManagersIgnore} type="text" placeholder="All managers ignored" />
+        <input
+          {...allManagersIgnore}
+          type="text"
+          placeholder="All managers ignored"
+        />
         <pre>{JSON.stringify(allManagersIgnore, null, 2)}</pre>
       </div>
-      
+
       <div className="test-case">
         <label>Specific Managers Ignore (1Password + LastPass):</label>
-        <input {...specificManagersIgnore} type="text" placeholder="Specific managers ignored" />
+        <input
+          {...specificManagersIgnore}
+          type="text"
+          placeholder="Specific managers ignored"
+        />
         <pre>{JSON.stringify(specificManagersIgnore, null, 2)}</pre>
       </div>
-      
+
       <div className="test-case">
         <label>Browser Autocomplete Allow:</label>
-        <input {...browserAllow} type="text" placeholder="Browser autocomplete allowed" />
+        <input
+          {...browserAllow}
+          type="text"
+          placeholder="Browser autocomplete allowed"
+        />
         <pre>{JSON.stringify(browserAllow, null, 2)}</pre>
       </div>
-      
+
       <div className="test-case">
         <label>Prevention Props:</label>
-        <input {...preventionProps} type="text" placeholder="Prevention props" />
+        <input
+          {...preventionProps}
+          type="text"
+          placeholder="Prevention props"
+        />
         <pre>{JSON.stringify(preventionProps, null, 2)}</pre>
       </div>
-      
+
       <div className="test-case">
         <label>Merged Props:</label>
         <input {...mergedProps} type="text" />
@@ -173,9 +201,9 @@ const TypeValidationComponent: React.FC = () => {
     behavior: PasswordManagerBehavior.IGNORE,
     managers: [PasswordManager.ONE_PASSWORD],
   };
-  
+
   const props: FormElementProps = getPasswordManagerAttributes(config);
-  
+
   return (
     <div className="type-validation">
       <h3>TypeScript Type Validation</h3>
@@ -198,27 +226,30 @@ function App() {
           works correctly with React and catches any compatibility issues.
         </p>
       </header>
-      
+
       <main>
         <section>
           <h2>Test Input Component</h2>
-          <TestInput 
-            label="Test Input with Prevention:" 
+          <TestInput
+            label="Test Input with Prevention:"
             placeholder="This input prevents all password managers"
             className="test-input"
           />
         </section>
-        
+
         <CoreFunctionTestComponent />
         <HookTestComponent />
         <TypeValidationComponent />
-        
+
         <section>
           <h2>Form Example</h2>
           <form className="example-form">
             <TestInput label="Username:" placeholder="Enter username" />
             <TestInput label="Password:" placeholder="Enter password" />
-            <TestInput label="Confirm Password:" placeholder="Confirm password" />
+            <TestInput
+              label="Confirm Password:"
+              placeholder="Confirm password"
+            />
             <button type="submit">Submit</button>
           </form>
         </section>
@@ -227,4 +258,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

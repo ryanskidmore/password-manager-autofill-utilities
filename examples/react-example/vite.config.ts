@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,10 +10,10 @@ export default defineConfig({
       onwarn(warning, warn) {
         // Fail on warnings to catch potential issues
         if (warning.code === 'UNUSED_EXTERNAL_IMPORT') {
-          return
+          return;
         }
-        warn(warning)
-      }
-    }
-  }
-}) 
+        warn(warning);
+      },
+    },
+  },
+});

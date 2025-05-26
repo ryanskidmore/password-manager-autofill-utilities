@@ -1,30 +1,45 @@
 {
   "name": "password-manager-autofill-utilities",
-  "version": "1.0.0",
-  "description": "TypeScript utilities to control password manager autofill behavior across different password managers",
+  "version": "1.0.1",
+  "author": "Ryan Skidmore <github@ryanskidmore.co.uk>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanskidmore/password-manager-autofill-utilities.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@types/bun": "^1.2.14",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "lint-staged": "^15.1.0",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.5.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "bugs": {
+    "url": "https://github.com/ryanskidmore/password-manager-autofill-utilities/issues"
+  },
+  "description": "TypeScript utilities to control password manager autofill behavior across different password managers",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
-  "scripts": {
-    "build": "rollup -c rollup.config.mjs",
-    "build:watch": "rollup -c rollup.config.mjs -w",
-    "dev": "rollup -c rollup.config.mjs -w",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
-    "type-check": "tsc --noEmit",
-    "clean": "rimraf dist",
-    "example:install": "cd examples/react-example && bun install",
-    "example:build": "cd examples/react-example && bun run build",
-    "example:dev": "cd examples/react-example && bun run dev",
-    "example:type-check": "cd examples/react-example && bun run type-check",
-    "validate": "bun run clean && bun run build && bun test && bun run lint && bun run type-check && bun run example:install && bun run example:type-check && bun run example:build",
-    "prepublishOnly": "bun run validate"
-  },
+  "homepage": "https://github.com/ryanskidmore/password-manager-autofill-utilities#readme",
   "keywords": [
     "password-manager",
     "autofill",
@@ -43,49 +58,32 @@
     "form-control",
     "browser-extension"
   ],
-  "author": "Ryan Skidmore <github@ryanskidmore.co.uk>",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ryanskidmore/password-manager-autofill-utilities.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ryanskidmore/password-manager-autofill-utilities/issues"
-  },
-  "homepage": "https://github.com/ryanskidmore/password-manager-autofill-utilities#readme",
-  "devDependencies": {
-    "@types/bun": "^1.2.14",
-    "@types/node": "^20.9.0",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
-    "eslint": "^8.54.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "lint-staged": "^15.1.0",
-    "prettier": "^3.1.0",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.5.0",
-    "rollup-plugin-typescript2": "^0.36.0",
-    "typescript": "^5.2.2"
-  },
-  "peerDependencies": {
-    "react": ">=16.8.0"
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": true
-    }
-  },
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ]
   },
-  "engines": {
-    "node": ">=16.0.0"
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
   },
-  "dependencies": {
-    "@types/jest": "^29.5.14"
-  }
+  "scripts": {
+    "build": "rollup -c rollup.config.mjs",
+    "build:watch": "rollup -c rollup.config.mjs -w",
+    "dev": "rollup -c rollup.config.mjs -w",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "example:install": "cd examples/react-example && bun install",
+    "example:build": "cd examples/react-example && bun run build",
+    "example:dev": "cd examples/react-example && bun run dev",
+    "example:type-check": "cd examples/react-example && bun run type-check",
+    "validate": "bun run clean && bun run build && bun test && bun run lint && bun run type-check",
+    "prepublishOnly": "bun run validate"
+  },
+  "types": "dist/index.d.ts"
 }

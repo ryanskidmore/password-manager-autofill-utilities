@@ -1,5 +1,6 @@
 import typescript from 'rollup-plugin-typescript2';
 import { readFileSync } from 'fs';
+import ts from 'typescript';
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 
@@ -15,7 +16,7 @@ export default [
     },
     plugins: [
       typescript({
-        typescript: require('typescript'),
+        typescript: ts,
         tsconfigOverride: {
           compilerOptions: {
             target: 'ES2020',
@@ -48,7 +49,7 @@ export default [
     },
     plugins: [
       typescript({
-        typescript: require('typescript'),
+        typescript: ts,
         tsconfigOverride: {
           compilerOptions: {
             target: 'ES2020',
@@ -71,4 +72,4 @@ export default [
     ],
     external: ['react'],
   },
-]; 
+];

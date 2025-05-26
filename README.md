@@ -262,10 +262,7 @@ bun run example:install
 
 ```bash
 # Run tests
-bun run test
-
-# Run tests with coverage
-bun run test:coverage
+bun test
 
 # Build the library
 bun run build

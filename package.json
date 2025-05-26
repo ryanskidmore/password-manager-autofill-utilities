@@ -14,9 +14,6 @@
     "build": "rollup -c rollup.config.mjs",
     "build:watch": "rollup -c rollup.config.mjs -w",
     "dev": "rollup -c rollup.config.mjs -w",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "type-check": "tsc --noEmit",
@@ -25,7 +22,7 @@
     "example:build": "cd examples/react-example && bun run build",
     "example:dev": "cd examples/react-example && bun run dev",
     "example:type-check": "cd examples/react-example && bun run type-check",
-    "validate": "bun run clean && bun run build && bun run test && bun run lint && bun run type-check && bun run example:install && bun run example:type-check && bun run example:build",
+    "validate": "bun run clean && bun run build && bun test && bun run lint && bun run type-check && bun run example:install && bun run example:type-check && bun run example:build",
     "prepublishOnly": "bun run validate",
     "prepare": "husky install"
   },
@@ -58,7 +55,7 @@
   },
   "homepage": "https://github.com/ryanskidmore/password-manager-autofill-utilities#readme",
   "devDependencies": {
-    "@types/jest": "^29.5.8",
+    "@types/bun": "latest",
     "@types/node": "^20.9.0",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
@@ -66,14 +63,11 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
     "husky": "^8.0.3",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^15.1.0",
     "prettier": "^3.1.0",
     "rimraf": "^5.0.5",
     "rollup": "^4.5.0",
     "rollup-plugin-typescript2": "^0.36.0",
-    "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },
   "peerDependencies": {

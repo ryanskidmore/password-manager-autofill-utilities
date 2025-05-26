@@ -39,7 +39,7 @@ jobs:
         run: bun run lint
         
       - name: Test library
-        run: bun run test
+        run: bun test
         
       - name: Build library
         run: bun run build

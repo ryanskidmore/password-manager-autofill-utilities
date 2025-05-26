@@ -23,8 +23,7 @@
     "example:dev": "cd examples/react-example && bun run dev",
     "example:type-check": "cd examples/react-example && bun run type-check",
     "validate": "bun run clean && bun run build && bun test && bun run lint && bun run type-check && bun run example:install && bun run example:type-check && bun run example:build",
-    "prepublishOnly": "bun run validate",
-    "prepare": "husky install"
+    "prepublishOnly": "bun run validate"
   },
   "keywords": [
     "password-manager",
@@ -62,7 +61,6 @@
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
-    "husky": "^8.0.3",
     "lint-staged": "^15.1.0",
     "prettier": "^3.1.0",
     "rimraf": "^5.0.5",

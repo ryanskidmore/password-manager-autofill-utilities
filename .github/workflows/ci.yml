@@ -1,0 +1,277 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  test:
+    name: Test Library and Example
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18, 20]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+            examples/react-example/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+            
+      - name: Install library dependencies
+        run: bun install
+        
+      - name: Type check library
+        run: bun run type-check
+        
+      - name: Lint library
+        run: bun run lint
+        
+      - name: Test library
+        run: bun run test
+        
+      - name: Build library
+        run: bun run build
+        
+      - name: Install example dependencies
+        run: bun run example:install
+        
+      - name: Type check example
+        run: bun run example:type-check
+        
+      - name: Build example
+        run: bun run example:build
+        
+      - name: Upload library build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: library-dist-node-${{ matrix.node-version }}
+          path: dist/
+          retention-days: 7
+          
+      - name: Upload example build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: example-dist-node-${{ matrix.node-version }}
+          path: examples/react-example/dist/
+          retention-days: 7
+
+  compatibility-test:
+    name: React Compatibility Test
+    runs-on: ubuntu-latest
+    needs: test
+    
+    strategy:
+      matrix:
+        react-version: ['16.8.0', '17.0.0', '18.0.0']
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Install library dependencies
+        run: bun install
+        
+      - name: Build library
+        run: bun run build
+        
+      - name: Install example dependencies
+        run: bun run example:install
+        
+      - name: Install React ${{ matrix.react-version }}
+        run: |
+          cd examples/react-example
+          bun add react@${{ matrix.react-version }} react-dom@${{ matrix.react-version }}
+          
+      - name: Type check with React ${{ matrix.react-version }}
+        run: bun run example:type-check
+        
+      - name: Build example with React ${{ matrix.react-version }}
+        run: bun run example:build
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Install dependencies
+        run: bun install
+        
+      - name: Run security audit
+        run: bun audit
+        continue-on-error: true
+        
+      - name: Install example dependencies
+        run: bun run example:install
+        
+      - name: Run example security audit
+        run: |
+          cd examples/react-example
+          bun audit
+        continue-on-error: true
+
+  validate-package:
+    name: Validate Package
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Install dependencies
+        run: bun install
+        
+      - name: Build library
+        run: bun run build
+        
+      - name: Check package contents
+        run: |
+          echo "Checking package.json..."
+          cat package.json | jq '.main, .module, .types, .files'
+          
+          echo "Checking dist directory..."
+          ls -la dist/
+          
+          echo "Checking if all required files exist..."
+          test -f dist/index.js || (echo "Missing dist/index.js" && exit 1)
+          test -f dist/index.esm.js || (echo "Missing dist/index.esm.js" && exit 1)
+          test -f dist/index.d.ts || (echo "Missing dist/index.d.ts" && exit 1)
+          
+      - name: Test package installation
+        run: |
+          # Create a temporary test project
+          mkdir -p /tmp/test-install
+          cd /tmp/test-install
+          
+          # Initialize a new project
+          echo '{"name": "test-install", "version": "1.0.0"}' > package.json
+          
+          # Install our built package
+          bun add file:${{ github.workspace }}
+          
+          # Test that we can import the package
+          echo "
+          import { 
+            getPasswordManagerAttributes, 
+            PasswordManager, 
+            PasswordManagerBehavior 
+          } from 'password-manager-autofill-utilities';
+          
+          const attrs = getPasswordManagerAttributes({
+            behavior: PasswordManagerBehavior.IGNORE,
+            managers: [PasswordManager.ONE_PASSWORD]
+          });
+          
+          console.log('Package installation test passed!', attrs);
+          " > test.js
+          
+          bun run test.js
+
+  performance-test:
+    name: Performance Test
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Install dependencies
+        run: bun install
+        
+      - name: Build library
+        run: bun run build
+        
+      - name: Check bundle size
+        run: |
+          echo "Checking bundle sizes..."
+          
+          echo "Main bundle (CJS):"
+          ls -lh dist/index.js
+          
+          echo "ESM bundle:"
+          ls -lh dist/index.esm.js
+          
+          echo "Type definitions:"
+          ls -lh dist/index.d.ts
+          
+          # Check that bundles are reasonably sized (under 50KB)
+          SIZE_CJS=$(stat -c%s dist/index.js)
+          SIZE_ESM=$(stat -c%s dist/index.esm.js)
+          
+          if [ $SIZE_CJS -gt 51200 ]; then
+            echo "Warning: CJS bundle is larger than 50KB ($SIZE_CJS bytes)"
+            exit 1
+          fi
+          
+          if [ $SIZE_ESM -gt 51200 ]; then
+            echo "Warning: ESM bundle is larger than 50KB ($SIZE_ESM bytes)"
+            exit 1
+          fi
+          
+          echo "Bundle sizes are acceptable!"
+          
+      - name: Install example dependencies
+        run: bun run example:install
+        
+      - name: Check example bundle size
+        run: |
+          bun run example:build
+          
+          echo "Example bundle sizes:"
+          ls -lh examples/react-example/dist/assets/
+          
+          # Check that example builds successfully and isn't too large
+          TOTAL_SIZE=$(du -sb examples/react-example/dist/ | cut -f1)
+          echo "Total example build size: $TOTAL_SIZE bytes"
+          
+          if [ $TOTAL_SIZE -gt 1048576 ]; then  # 1MB
+            echo "Warning: Example build is larger than 1MB"
+          fi 

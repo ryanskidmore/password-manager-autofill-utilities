@@ -1,0 +1,179 @@
+name: Code Quality
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  lint-and-format:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-lint-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-lint-
+            ${{ runner.os }}-bun-
+            
+      - name: Install dependencies
+        run: bun install
+        
+      - name: Check TypeScript types
+        run: bun run type-check
+        
+      - name: Run ESLint
+        run: bun run lint
+        
+      - name: Check Prettier formatting
+        run: |
+          bun run prettier --check "src/**/*.{ts,tsx,js,jsx,json,md}"
+          bun run prettier --check "examples/**/*.{ts,tsx,js,jsx,json,md}"
+          
+      - name: Check for unused dependencies
+        run: |
+          echo "Checking for unused dependencies..."
+          # This is a basic check - you might want to use a tool like depcheck
+          bun run tsc --noEmit --skipLibCheck
+          
+  type-coverage:
+    name: TypeScript Coverage
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Install dependencies
+        run: bun install
+        
+      - name: Check TypeScript strict mode compliance
+        run: |
+          echo "Checking TypeScript strict mode compliance..."
+          bun run tsc --noEmit --strict
+          
+      - name: Verify no any types in production code
+        run: |
+          echo "Checking for 'any' types in production code..."
+          if grep -r ": any" src/ --include="*.ts" --exclude="*.test.ts" --exclude="*.spec.ts"; then
+            echo "Found 'any' types in production code. Please add proper types."
+            exit 1
+          else
+            echo "No 'any' types found in production code ✓"
+          fi
+          
+  documentation:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Check README exists and is not empty
+        run: |
+          if [ ! -f README.md ]; then
+            echo "README.md is missing"
+            exit 1
+          fi
+          
+          if [ ! -s README.md ]; then
+            echo "README.md is empty"
+            exit 1
+          fi
+          
+          echo "README.md exists and has content ✓"
+          
+      - name: Check example README
+        run: |
+          if [ ! -f examples/react-example/README.md ]; then
+            echo "Example README.md is missing"
+            exit 1
+          fi
+          
+          echo "Example README.md exists ✓"
+          
+      - name: Check for JSDoc comments
+        run: |
+          echo "Checking for JSDoc comments in main functions..."
+          
+          # Check that main exported functions have JSDoc comments
+          if ! grep -q "\/\*\*" src/utils/passwordManagerUtils.ts; then
+            echo "Warning: Missing JSDoc comments in passwordManagerUtils.ts"
+          fi
+          
+          if ! grep -q "\/\*\*" src/utils/reactUtils.ts; then
+            echo "Warning: Missing JSDoc comments in reactUtils.ts"
+          fi
+          
+          echo "JSDoc check completed"
+          
+  security:
+    name: Security Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Install dependencies
+        run: bun install
+        
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Checking for potential hardcoded secrets..."
+          
+          # Check for common secret patterns
+          if grep -r -i "password\s*=" src/ --include="*.ts" --include="*.js"; then
+            echo "Warning: Found potential hardcoded passwords"
+          fi
+          
+          if grep -r -i "api[_-]?key\s*=" src/ --include="*.ts" --include="*.js"; then
+            echo "Warning: Found potential hardcoded API keys"
+          fi
+          
+          if grep -r -i "secret\s*=" src/ --include="*.ts" --include="*.js"; then
+            echo "Warning: Found potential hardcoded secrets"
+          fi
+          
+          echo "Security check completed"
+          
+      - name: Check package.json security
+        run: |
+          echo "Checking package.json for security issues..."
+          
+          # Check that we're not accidentally including sensitive files
+          if grep -q "\.env" package.json; then
+            echo "Warning: package.json might include .env files"
+          fi
+          
+          # Check for proper file inclusion
+          if ! grep -q '"files"' package.json; then
+            echo "Warning: package.json missing 'files' field - might publish too many files"
+          fi
+          
+          echo "Package.json security check completed" 

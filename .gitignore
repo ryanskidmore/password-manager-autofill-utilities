@@ -1,0 +1,9 @@
+node_modules/
+.husky/
+bun.lock
+dist/
+
+# Example app artifacts
+examples/*/node_modules/
+examples/*/dist/
+examples/*/.vite/

@@ -1,0 +1,96 @@
+{
+  "name": "password-manager-autofill-utilities",
+  "version": "1.0.0",
+  "description": "TypeScript utilities to control password manager autofill behavior across different password managers",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "example:install": "cd examples/react-example && bun install",
+    "example:build": "cd examples/react-example && bun run build",
+    "example:dev": "cd examples/react-example && bun run dev",
+    "example:type-check": "cd examples/react-example && bun run type-check",
+    "validate": "bun run clean && bun run build && bun run test && bun run lint && bun run type-check && bun run example:install && bun run example:type-check && bun run example:build",
+    "prepublishOnly": "bun run validate",
+    "prepare": "husky install"
+  },
+  "keywords": [
+    "password-manager",
+    "autofill",
+    "1password",
+    "lastpass",
+    "bitwarden",
+    "dashlane",
+    "form",
+    "input",
+    "typescript",
+    "react",
+    "utilities",
+    "security",
+    "privacy",
+    "web-security",
+    "form-control",
+    "browser-extension"
+  ],
+  "author": "Ryan Skidmore <github@ryanskidmore.co.uk>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanskidmore/password-manager-autofill-utilities.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryanskidmore/password-manager-autofill-utilities/issues"
+  },
+  "homepage": "https://github.com/ryanskidmore/password-manager-autofill-utilities#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.1.0",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.5.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
